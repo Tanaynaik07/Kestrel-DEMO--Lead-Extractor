@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kestrel(DEMO) — Operations &amp; growth consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #12181C;
+    --paper: #EDEEEA;
+    --paper-warm: #F4F3EE;
+    --slate: #4A5457;
+    --brass: #B8862B;
+    --brass-dark: #8F6A20;
+    --teal: #2F5D62;
+    --line: rgba(18,24,28,0.12);
+    --max: 1120px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.55;
+  }
+  h1, h2, h3, .serif {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0;
+  }
+  a { color: inherit; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 28px 0 0;
+  }
+  header .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark {
+    font-family: 'Source Serif 4', serif;
+    font-size: 21px;
+    letter-spacing: 0.01em;
+  }
+  .wordmark em { font-style: italic; color: var(--brass-dark); }
+  nav a {
+    text-decoration: none;
+    font-size: 14.5px;
+    color: var(--slate);
+    margin-left: 32px;
+  }
+  nav a:hover { color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 76px 0 88px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .hero h1 {
+    font-size: 46px;
+    line-height: 1.16;
+    max-width: 15ch;
+  }
+  .hero .lede {
+    margin-top: 22px;
+    font-size: 17px;
+    color: var(--slate);
+    max-width: 46ch;
+  }
+  .hero-points {
+    list-style: none;
+    padding: 0;
+    margin: 34px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .hero-points li {
+    display: flex;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .hero-points .mark {
+    color: var(--brass-dark);
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+  }
+
+  /* ---------- Intake card ---------- */
+  .intake {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    position: relative;
+    padding: 30px 30px 26px;
+  }
+  .intake::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 28px; right: 28px;
+    height: 3px;
+    background: var(--brass);
+  }
+  .intake .tag {
+    font-size: 12.5px;
+    color: var(--brass-dark);
+    letter-spacing: 0.02em;
+  }
+  .intake h3 {
+    font-size: 21px;
+    margin-top: 8px;
+  }
+  .intake p.hint {
+    color: var(--slate);
+    font-size: 13.5px;
+    margin: 8px 0 20px;
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14.5px;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus {
+    outline: 2px solid var(--teal);
+    outline-offset: 1px;
+  }
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .hp-field { position: absolute; left: -9999px; top: -9999px; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--ink);
+    color: var(--paper-warm);
+    border: none;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.15s ease;
+  }
+  .submit-btn:hover { background: var(--teal); }
+  .submit-btn:disabled { opacity: 0.6; cursor: default; }
+
+  .form-error {
+    color: #A3352B;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Confirmation state */
+  .confirm {
+    display: none;
+    padding: 6px 0 4px;
+  }
+  .confirm .tag { font-size: 12.5px; color: var(--teal); }
+  .confirm h3 { font-size: 20px; margin-top: 10px; }
+  .confirm p { color: var(--slate); font-size: 14.5px; margin-top: 10px; }
+  .confirm .urgency-badge {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    color: var(--slate);
+  }
+
+  /* ---------- How we work ---------- */
+  .process {
+    padding: 60px 0 76px;
+    border-top: 1px solid var(--line);
+  }
+  .process h2 { font-size: 28px; max-width: 20ch; }
+  .steps {
+    margin-top: 42px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .step {
+    padding: 0 28px;
+    border-left: 1px solid var(--line);
+  }
+  .step:first-child { border-left: none; padding-left: 0; }
+  .step .num {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    color: var(--brass-dark);
+    font-size: 15px;
+  }
+  .step h3 { font-size: 17px; margin-top: 10px; }
+  .step p { color: var(--slate); font-size: 14px; margin-top: 8px; }
+
+  /* ---------- Value strip ---------- */
+  .value {
+    padding: 60px 0 90px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+  }
+  .value h2 { font-size: 26px; max-width: 14ch; }
+  .value-list { list-style: none; padding: 0; margin: 0; }
+  .value-list li {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+  }
+  .value-list li:last-child { border-bottom: 1px solid var(--line); }
+  .value-list .k { font-size: 15px; }
+  .value-list .v { color: var(--slate); font-size: 14.5px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 46px 0;
+  }
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .serif { color: var(--paper); font-size: 18px; }
+  footer .meta { color: rgba(237,238,234,0.6); font-size: 13.5px; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; gap: 28px; }
+    .step { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 24px; }
+    .step:first-child { border-top: none; padding-top: 0; }
+    .value { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="wordmark">Kestrel <em>(DEMO)</em></div>
+    <nav>
+      <a href="#work">How we work</a>
+      <a href="#contact">Talk to us</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero wrap" id="contact">
+  <div>
+    <h1>Operations consulting for teams outgrowing their spreadsheets.</h1>
+    <p class="lede">We step into finance, ops, and go-to-market teams for 8–12 weeks and leave behind systems that keep running after we're gone.</p>
+    <ul class="hero-points">
+      <li><span class="mark">—</span> Process audits that end in a working system, not a slide deck</li>
+      <li><span class="mark">—</span> Built by operators who've run the function themselves</li>
+      <li><span class="mark">—</span> Fixed-scope engagements, no retainer creep</li>
+    </ul>
+  </div>
+
+  <div class="intake" id="intake-card">
+    <form id="lead-form">
+      <div class="tag">Tell us what you're dealing with</div>
+      <h3>Start the conversation</h3>
+      <p class="hint">A few sentences is plenty — we'll follow up personally within one business day.</p>
+
+      <div class="row2">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="Jordan Lee" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="jordan@company.com" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+1 555 010 2938" />
+      </div>
+
+      <div class="field">
+        <label for="message">What's going on?</label>
+        <textarea id="message" name="message" rows="5" maxlength="4000" required placeholder="e.g. Our AP process is entirely manual and closing the books takes two weeks. Looking to fix this before year end, budget around $15k."></textarea>
+      </div>
+
+      <!-- Honeypot: real visitors leave this blank; bots tend to fill every field -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="company_website">Company website</label>
+        <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <button class="submit-btn" type="submit" id="submit-btn">Send inquiry</button>
+      <p class="form-error" id="form-error"></p>
+    </form>
+
+    <div class="confirm" id="confirm-state">
+      <div class="tag">Got it</div>
+      <h3 id="confirm-summary">Thanks — we've logged your inquiry.</h3>
+      <p>We'll be in touch shortly at the details you provided.</p>
+    </div>
+  </div>
+</section>
+
+<section class="process wrap" id="work">
+  <h2>What happens after you hit send</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">01</div>
+      <h3>Your message is read closely</h3>
+      <p>No forms to fill in twice — write naturally and we pull out what matters: the need, the timeline, the budget.</p>
+    </div>
+    <div class="step">
+      <div class="num">02</div>
+      <h3>It lands on the right desk</h3>
+      <p>Every inquiry is triaged by urgency and routed straight to the partner who covers that area.</p>
+    </div>
+    <div class="step">
+      <div class="num">03</div>
+      <h3>You hear back, same day</h3>
+      <p>No auto-reply purgatory. A person responds with next steps, usually within a few hours.</p>
+    </div>
+  </div>
+</section>
+
+<section class="value wrap">
+  <h2>Where we typically start</h2>
+  <ul class="value-list">
+    <li><span class="k">Financial operations</span><span class="v">Close process, AP/AR automation, reporting you can actually trust.</span></li>
+    <li><span class="k">Revenue operations</span><span class="v">Pipeline hygiene, lead routing, and the handoff between marketing and sales.</span></li>
+    <li><span class="k">Internal tooling</span><span class="v">Replacing the spreadsheet-and-Slack-thread system with something that scales.</span></li>
+  </ul>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="serif">Kestrel (Demo project)</div>
+    <div class="meta">techbytan@gmail.com · Replies within one business day</div>
+  </div>
+</footer>
+
+<script>
+  const form = document.getElementById('lead-form');
+  const errorEl = document.getElementById('form-error');
+  const submitBtn = document.getElementById('submit-btn');
+  const confirmState = document.getElementById('confirm-state');
+  const confirmSummary = document.getElementById('confirm-summary');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+
+    const payload = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      message: form.message.value.trim(),
+      company_website: form.company_website.value // honeypot
+    };
+
+    if (payload.message.length < 5) {
+      errorEl.textContent = 'Add a sentence or two about what you need.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (payload.message.length > 4000) {
+      errorEl.textContent = 'That message is a bit long — please keep it under 4000 characters.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (payload.message.trim().split(/\s+/).length > 600) {
+      errorEl.textContent = 'That message is a bit long — please keep it under 600 words.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    // Retries with backoff on network blips / server hiccups (5xx). Does NOT retry
+    // on 4xx (validation errors, rate limiting) since those won't succeed on retry.
+    async function submitWithRetry(retries = 2, baseDelayMs = 800) {
+      for (let attempt = 0; ; attempt++) {
+        let res;
+        try {
+          res = await fetch('/api/lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (networkErr) {
+          // fetch threw: offline, DNS failure, connection dropped, etc.
+          if (attempt >= retries) throw new Error('Network issue — please check your connection and try again.');
+          submitBtn.textContent = `Connection issue, retrying… (${attempt + 1}/${retries})`;
+          await new Promise((r) => setTimeout(r, baseDelayMs * 2 ** attempt));
+          continue;
+        }
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          if (res.status >= 500 && attempt < retries) {
+            submitBtn.textContent = `Server busy, retrying… (${attempt + 1}/${retries})`;
+            await new Promise((r) => setTimeout(r, baseDelayMs * 2 ** attempt));
+            continue;
+          }
+          throw new Error(data.error || 'Something went wrong. Please try again.');
+        }
+
+        return data;
+      }
+    }
+
+    try {
+      await submitWithRetry();
+
+      form.style.display = 'none';
+      confirmState.style.display = 'block';
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send inquiry';
+    }
+  });
+</script>
+
+</body>
+</html>
